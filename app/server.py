@@ -128,8 +128,7 @@ classes = ['Apple Braeburn',
  'Tomato Cherry Red',
  'Tomato Maroon',
  'Tomato Yellow',
- 'Walnut',
- 'test-multiple_fruits']
+ 'Walnut']
 path = Path(__file__).parent
 
 app = Starlette()
