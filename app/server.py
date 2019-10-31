@@ -7,7 +7,7 @@ from io import BytesIO
 
 from fastai.vision import *
 
-model_file_url = 'https://drive.google.com/uc?export=download&id=1d3iMAc4jcOSqqZGMMn_p8e9FUR8K0x56'
+model_file_url = 'https://drive.google.com/uc?export=download&id=16cm9MnWM18myoCDeLupJSrvRGjSENsfC'
 model_file_name = 'model'
 classes = ['Apple Braeburn',
  'Apple Crimson Snow',
