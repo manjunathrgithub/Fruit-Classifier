@@ -144,7 +144,14 @@ async def download_file(url, dest):
 
 async def setup_learner():
     await download_file(model_file_url, path/'models'/f'{model_file_name}.pth')
-   
+
+    data = (ImageList.from_folder(path_train) #Where to find the data? -> in path and its subfolders
+    .split_by_rand_pct()              #How to split in train/valid? -> use the folders
+    .label_from_folder()            #How to label? -> depending on the folder of the filenames
+    .add_test_folder(test_folder='/root/.fastai/data/Fruit-Images-Dataset-master/Test/')   #Optionally add a test set (here default name is test)
+    .transform(tfms, size=64)       #Data augmentation? -> use tfms with a size of 64
+    .databunch())   
+    learn = cnn_learner(data, models.resnet34, metrics=accuracy)
     learn.load(model_file_name)
     return learn
 
