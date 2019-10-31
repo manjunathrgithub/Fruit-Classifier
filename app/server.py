@@ -7,8 +7,8 @@ from io import BytesIO
 
 from fastai.vision import *
 
-model_file_url = 'https://drive.google.com/uc?export=download&id=16cm9MnWM18myoCDeLupJSrvRGjSENsfC'
-model_file_name = 'model'
+export_file_url = 'https://drive.google.com/uc?export=download&id=11kJ0eiZEI1DJA-GyniWS1lluw3I2sKRz'
+export_file_name = 'export'
 classes = ['Apple Braeburn',
  'Apple Crimson Snow',
  'Apple Golden 1',
@@ -143,17 +143,17 @@ async def download_file(url, dest):
             with open(dest, 'wb') as f: f.write(data)
 
 async def setup_learner():
-    await download_file(model_file_url, path/'models'/f'{model_file_name}.pth')
-
-    data = (ImageList.from_folder(path_train) #Where to find the data? -> in path and its subfolders
-    .split_by_rand_pct()              #How to split in train/valid? -> use the folders
-    .label_from_folder()            #How to label? -> depending on the folder of the filenames
-    .add_test_folder(test_folder='/root/.fastai/data/Fruit-Images-Dataset-master/Test/')   #Optionally add a test set (here default name is test)
-    .transform(tfms, size=64)       #Data augmentation? -> use tfms with a size of 64
-    .databunch())   
-    learn = cnn_learner(data, models.resnet34, metrics=accuracy)
-    learn.load(model_file_name)
-    return learn
+    await download_file(export_file_url, path / export_file_name)
+    try:
+        learn = load_learner(path, export_file_name)
+        return learn
+    except RuntimeError as e:
+        if len(e.args) > 0 and 'CPU-only machine' in e.args[0]:
+            print(e)
+            message = "\n\nThis model was trained with an old version of fastai and will not work in a CPU environment.\n\nPlease update the fastai library in your training environment and export your model again.\n\nSee instructions for 'Returning to work' at https://course.fast.ai."
+            raise RuntimeError(message)
+        else:
+            raise
 
 loop = asyncio.get_event_loop()
 tasks = [asyncio.ensure_future(setup_learner())]
